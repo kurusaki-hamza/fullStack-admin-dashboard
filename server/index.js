@@ -2,10 +2,12 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import path from "path";
 import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
+import {fileURLToPath} from 'url';
 
 /* ROUTES */
 import clientRoutes from "./routes/client.js";
@@ -45,6 +47,14 @@ app.use("/client", clientRoutes);
 app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
 app.use("/sales", salesRoutes);
+
+/* SERVE STATIC FILES */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, 'build')))
+app.use("/", (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', "index.html"))
+});
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 5001;
